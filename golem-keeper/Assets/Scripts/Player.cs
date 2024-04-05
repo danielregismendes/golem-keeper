@@ -1,69 +1,188 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class Player : MonoBehaviour
 {
-    public float maxSpeed = 4;
-    public float jumpForce = 400;
-    public int maxHealth = 10;
+    public float currentSpeed, maxSpeed, arrasto, rotationSpeed, jumpForce;
+    public LayerMask layerGround;
+    public Rigidbody rb;
+    public Transform groundCheck;
+    public float maxSlope;
 
-    private int currentHealth;
-    private float currentSpeed;
-    private Rigidbody rb;
-    private Animator anim;
-    private Transform groundCheck;
-    private bool onGround;
-    private bool isDead = false;
-    private bool Jump = false;
-    private bool canJump = true;
+    private GameObject cam;
+    private bool direita, esquerda, frente, atras;
+    public bool grounded, jump;
 
-    void Start()
+
+    private void Start()
     {
-        groundCheck = gameObject.transform.Find("GroundCheck");
-        currentHealth = maxHealth;
-        rb = GetComponent<Rigidbody>();
-        anim = GetComponent<Animator>();
-        currentSpeed = maxSpeed;
+ 
+        cam = GameObject.FindGameObjectWithTag("MainCamera");
 
     }
 
-    void Update()
+    private void Update()
     {
 
-        onGround = Physics.Linecast(transform.position, groundCheck.position, 1 << LayerMask.NameToLayer("Ground"));
-
-        if (Input.GetButtonDown("Jump") && onGround && canJump)
-        {
-
-            Jump = true;
-
-        } 
+        CheckInputs();
+        Arrasto();
+        CheckGrounded();
 
     }
 
     private void FixedUpdate()
     {
 
-        if (!isDead)
+        Velocidade();
+        Movimentacao();
+        Rotacao();
+
+    }
+
+    void CheckGrounded()
+    {
+
+        RaycastHit hit;
+        if (Physics.Raycast(groundCheck.transform.position + Vector3.up * .1f, Vector3.down, out hit, Mathf.Infinity, layerGround))
         {
-            float h = Input.GetAxis("Horizontal");
-            float z = Input.GetAxis("Vertical");
+            float slopeAngle = Mathf.Deg2Rad * Vector3.Angle(Vector3.up, hit.normal);
+            float sec = 1 / Mathf.Cos(slopeAngle);
+            float yDiff = .5f * sec - .5f;
 
-            rb.velocity = new Vector3(h * currentSpeed, rb.velocity.y, z * currentSpeed);
-
-            if (onGround)
-                anim.SetFloat("Speed", Mathf.Abs(rb.velocity.magnitude));
-
-           if (Jump)
+            if((groundCheck.transform.position.y - yDiff) - hit.point.y < .05f)
             {
-                Jump = false;
-                rb.AddForce(Vector3.up * jumpForce);
+                if(Vector3.Angle(Vector3.up, hit.normal) <= maxSlope) 
+                {
+                    grounded = true;
+                    rb.useGravity = false;
+                    return;
+                }
+                rb.AddForce(Vector3.down * 300f);
             }
         }
 
-        rb.position = new Vector3(rb.position.x, rb.position.y, rb.position.z);
+        grounded = false;
+        rb.useGravity = true;
+
+    }
+
+    void Velocidade()
+    {
+        if (!grounded)
+        {
+            Vector3 horizontalVelocity = new Vector3(rb.velocity.x, 0, rb.velocity.z);
+            if (horizontalVelocity.magnitude > maxSpeed)
+            {
+
+                Vector3 limitedVelocity = horizontalVelocity.normalized * maxSpeed;
+                rb.velocity = new Vector3(limitedVelocity.x, rb.velocity.y, limitedVelocity.z);
+
+            }
+        }
+        else
+        {
+
+            if (rb.velocity.magnitude > maxSpeed)
+            {
+
+                Vector3 limitedVelocity = rb.velocity.normalized * maxSpeed;
+                rb.velocity = new Vector3(limitedVelocity.x, rb.velocity.y, limitedVelocity.z);
+
+
+            }
+        }
+
+    }
+
+    void Movimentacao()
+    {
+
+        if (esquerda)
+        {
+            MoveDir(Vector3.left);
+            esquerda = false;
+        }
+        if (frente)
+        {
+            MoveDir(Vector3.forward);
+            frente = false;
+        }
+        if (atras)
+        {
+            MoveDir(Vector3.back);
+            atras = false;
+        }
+        if (direita)
+        {
+            MoveDir(Vector3.right);
+            direita = false;
+        }
+
+        if(jump && grounded)
+        {
+            transform.position += Vector3.up * .5f;
+            rb.velocity = new Vector3(rb.velocity.x, 0, rb.velocity.z);
+            rb.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
+            jump = false;
+        }
+
+    }
+
+    void Arrasto()
+    {
+
+        if(!grounded)
+            rb.velocity = new Vector3(rb.velocity.x, 0, rb.velocity.z) / (1 + arrasto / 100) + new Vector3(0, rb.velocity.y, 0);
+        else
+            rb.velocity /= (1 + arrasto / 100);
+    }
+
+    void Rotacao()
+    {
+        Vector3 dir = rb.GetAccumulatedForce();
+        if((new Vector2(dir.x, dir.z)).magnitude > .1f)
+        {
+            Vector3 horizontalDir = new Vector3(dir.x, 0, dir.z);
+            Quaternion rotation = Quaternion.LookRotation(horizontalDir, Vector3.up);
+            transform.rotation = Quaternion.RotateTowards(transform.rotation, rotation, rotationSpeed);
+        }
+
+    }
+
+    void MoveDir(Vector3 moveDir)
+    {
+
+        Quaternion dir = Quaternion.Euler(0f, cam.transform.rotation.eulerAngles.y, 0f);
+
+        Vector3 planeNormal = Vector3.up;
+
+        if(grounded)
+            if (Physics.Raycast(groundCheck.transform.position + Vector3.up * 0.1f, Vector3.down, out RaycastHit hit, Mathf.Infinity, layerGround))
+                planeNormal = hit.normal;
+
+        Vector3 force = Vector3.ProjectOnPlane(dir * moveDir, planeNormal) * currentSpeed;
+
+        rb.AddForce(force);
+
+    }
+
+    void CheckInputs()
+    {
+
+        if (Input.GetKey(KeyCode.A))
+            esquerda = true;
+        if (Input.GetKey(KeyCode.W))
+            frente = true;
+        if (Input.GetKey(KeyCode.S))
+            atras = true;
+        if (Input.GetKey(KeyCode.D))
+            direita = true;
+        if(Input.GetKeyDown(KeyCode.Space) && grounded)
+            jump = true;
+
 
     }
 
