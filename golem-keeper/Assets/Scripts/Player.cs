@@ -10,12 +10,13 @@ public class Player : MonoBehaviour
     public LayerMask layerGround;
     public Rigidbody rb;
     public Transform groundCheck;
+    public Transform interactor;
     public float maxSlope;
 
     private GameObject cam;
     private bool direita, esquerda, frente, atras;
-    public bool grounded, jump;
-
+    private bool grounded, jump;
+    private Farming selectedLand = null;
 
     private void Start()
     {
@@ -30,6 +31,7 @@ public class Player : MonoBehaviour
         CheckInputs();
         Arrasto();
         CheckGrounded();
+        CheckFarmGround();
 
     }
 
@@ -66,6 +68,47 @@ public class Player : MonoBehaviour
 
         grounded = false;
         rb.useGravity = true;
+
+    }
+
+    void CheckFarmGround()
+    {
+        RaycastHit hit;
+        Collider farmLand;
+
+        if (Physics.Raycast(interactor.transform.position, Vector3.down, out hit, 2.0f))
+        {
+            farmLand = hit.collider;
+
+            if (farmLand.tag == "FarmGround")
+            {
+
+                Farming farming = farmLand.GetComponent<Farming>();
+                SelectedLand(farming);
+                return;
+
+            }
+
+            if(selectedLand != null)
+            {
+                selectedLand.Select(false);
+                selectedLand = null;
+            }
+
+        }
+
+    }
+
+    void SelectedLand(Farming farming)
+    {
+
+        if(selectedLand != null)
+        {
+            selectedLand.Select(false);
+        }
+
+        selectedLand = farming;
+        farming.Select(true);
 
     }
 
