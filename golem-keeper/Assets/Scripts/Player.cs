@@ -112,6 +112,15 @@ public class Player : MonoBehaviour
 
     }
 
+    void InteractFarm()
+    {
+
+        Debug.Log(selectedLand.name);
+
+
+
+    }
+
     void Velocidade()
     {
         if (!grounded)
@@ -225,7 +234,8 @@ public class Player : MonoBehaviour
             direita = true;
         if(Input.GetKeyDown(KeyCode.Space) && grounded)
             jump = true;
-
+        if (Input.GetMouseButtonDown(0) && selectedLand)
+            InteractFarm();
 
     }
 
