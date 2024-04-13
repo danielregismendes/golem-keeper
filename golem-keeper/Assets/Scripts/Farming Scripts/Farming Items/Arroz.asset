@@ -15,6 +15,7 @@ MonoBehaviour:
   namePlant: Repolho
   plantDescription: Rei do polho
   thumbPlant: {fileID: 21300000, guid: d1c9fa7426dbdba4789274001b3075b2, type: 3}
-  gameModelPlant: {fileID: 919132149155446097, guid: 13415591fe44ca74380820fe733bd6af, type: 3}
+  gameModelPlant: {fileID: 919132149155446097, guid: 0cf6b6c8ce8d94946a3cedd9a9b4a0ea, type: 3}
   thumbSeed: {fileID: 21300000, guid: d1c9fa7426dbdba4789274001b3075b2, type: 3}
+  gameModelSeed: {fileID: 0}
   growTime: 10

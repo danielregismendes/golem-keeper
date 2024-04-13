@@ -12,16 +12,20 @@ public class Player : MonoBehaviour
     public Transform groundCheck;
     public Transform interactor;
     public float maxSlope;
+    public GameObject menuFarming;
+    public string seedSelect = "";
 
     private GameObject cam;
     private bool direita, esquerda, frente, atras;
     private bool grounded, jump;
     private Farming selectedLand = null;
+    private GameManager gameManager;
 
     private void Start()
     {
  
         cam = GameObject.FindGameObjectWithTag("MainCamera");
+        gameManager = FindFirstObjectByType<GameManager>();
 
     }
 
@@ -112,12 +116,32 @@ public class Player : MonoBehaviour
 
     }
 
-    void InteractFarm()
-    {
+    public void InteractFarm()
+    {    
+        if (selectedLand.state == FARMSTATE.VAZIO)
+        {
+            Debug.Log(seedSelect != "");
 
-        Debug.Log(selectedLand.name);
+            Cursor.visible = true;
+            Cursor.lockState = CursorLockMode.Confined;
+            menuFarming.SetActive(true);
+            Time.timeScale = 0;
 
+            if (seedSelect != "")
+            {
+                selectedLand.Seeding(seedSelect);
+                menuFarming.SetActive(false);
+                seedSelect = "";
+                Time.timeScale = 1;
+            }
+        }
+        if (selectedLand.state == FARMSTATE.COLHEITA)
+        {
 
+            gameManager.SetInventario(selectedLand.plantData.name, 1, 0);
+            selectedLand.state = FARMSTATE.SECO;
+
+        }
 
     }
 
@@ -234,7 +258,7 @@ public class Player : MonoBehaviour
             direita = true;
         if(Input.GetKeyDown(KeyCode.Space) && grounded)
             jump = true;
-        if (Input.GetMouseButtonDown(0) && selectedLand)
+        if (Input.GetKeyDown(KeyCode.E) && selectedLand)
             InteractFarm();
 
     }
