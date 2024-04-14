@@ -5,6 +5,7 @@ TagManager:
   serializedVersion: 2
   tags:
   - FarmGround
+  - Enemy
   layers:
   - Default
   - TransparentFX
@@ -12,11 +13,11 @@ TagManager:
   - Ground
   - Water
   - UI
-  - 
-  - 
-  - 
-  - 
-  - 
+  - Player
+  - PlayerHit
+  - Enemy
+  - EnemyHit
+  - CrashItem
   - 
   - 
   - 

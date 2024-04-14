@@ -240,3 +240,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   select: {fileID: 2665299739121543630}
   plant: {fileID: 2314832704545210201}
+  state: 0
+  plantData: {fileID: 0}
