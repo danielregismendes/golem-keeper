@@ -149,6 +149,8 @@ public class Player : MonoBehaviour
                 selectedLand.Seeding(seedSelect);
                 menuFarming.SetActive(false);
                 seedSelect = "";
+                Cursor.visible = false;
+                Cursor.lockState = CursorLockMode.Locked;
                 Time.timeScale = 1;
             }
         }

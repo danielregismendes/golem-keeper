@@ -263,9 +263,21 @@ MonoBehaviour:
       resetTime: 0.4
       damage: 1
       hitSound: {fileID: 0}
+    - animation: Attack 1
+      inputButton: Fire 1
+      animationTime: 0.25
+      resetTime: 0.4
+      damage: 1
+      hitSound: {fileID: 0}
+    - animation: Attack 1
+      inputButton: Fire 1
+      animationTime: 0.25
+      resetTime: 0.4
+      damage: 1
+      hitSound: {fileID: 0}
   - hits:
     - animation: Attack 2
-      inputButton: Fire 2
+      inputButton: Fire 1
       animationTime: 0.25
       resetTime: 0.4
       damage: 1
