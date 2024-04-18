@@ -2,12 +2,24 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.AI;
 using UnityEngine.UI;
 
 
 public class Enemy : MonoBehaviour {
 
-	public float maxSpeed;
+    enum estadoDaAI
+    {
+        patrulha, seguindo, procurandoAlvoPerdido
+    };
+
+    estadoDaAI estadoAI;
+
+    public Transform[] rota;
+	public bool useRota = true;
+    public FOVEnemys cabeca;
+
+    public float maxSpeed;
 	public float damageTime = 0.5f;
 	public int damage;
 	public int maxHealth;
@@ -18,9 +30,16 @@ public class Enemy : MonoBehaviour {
     public float maxSlope;
     public LayerMask layerGround;
     public Transform groundCheck;
-
     public int currentHealth;
-	private float currentSpeed;
+
+	private NavMeshAgent navMesh;
+	private Transform alvo;
+    private Vector3 posicInicialDaAI;
+    private Vector3 ultimaPosicConhecida;
+    private float timerProcura;
+
+
+    private float currentSpeed;
 	private Rigidbody rb;
 	protected Animator anim;
 	private bool grounded;
@@ -34,67 +53,88 @@ public class Enemy : MonoBehaviour {
 	private float nextAttack;
 	private AudioSource audioS;
 	private GameManager	gameManager;
-
-	public float distanceAttackX = 1.5f;
-    public float distanceAttackZ = 1.5f;
+	private float distanceAttackX = 1.5f;
+    private float distanceAttackZ = 1.5f;
 
 
     void Start () {
 
-		rb = GetComponent<Rigidbody>();
+        navMesh = GetComponent<NavMeshAgent>();
+        rb = GetComponent<Rigidbody>();
 		anim = GetComponent<Animator>();
 		target = FindFirstObjectByType<Player>().transform;
 		currentHealth = maxHealth;
         gameManager = FindFirstObjectByType<GameManager>();
+        alvo = null;
+        ultimaPosicConhecida = Vector3.zero;
+        estadoAI = estadoDaAI.patrulha;
+        posicInicialDaAI = transform.position;
+        timerProcura = 0;
 
     }
 	
 
-	void Update () {
+	void Update () 
+	{
 
-            CheckGrounded();
-
-			walkTimer += Time.deltaTime;
-		
+		//CheckGrounded();
+				
 	}
 
 	private void FixedUpdate()
 	{
 
-			if (!isDead)
-			{
-				Vector3 targetDitance = target.position - transform.position;
-				float hForce = targetDitance.x / Mathf.Abs(targetDitance.x);
-
-				if (walkTimer >= UnityEngine.Random.Range(1f, 2f))
-				{
-					zForce = targetDitance.z / Mathf.Abs(targetDitance.z);
-                walkTimer = 0;
-				}
-
-				if (Mathf.Abs(targetDitance.x) < 1.5f)
-				{
-					hForce = 0;
-				}
-
-				if (!damaged)
-					rb.velocity = new Vector3(hForce * currentSpeed, 0, zForce * currentSpeed);
-
-				anim.SetFloat("Speed", Mathf.Abs(currentSpeed));
-
-				if (Mathf.Abs(targetDitance.x) < distanceAttackX && Mathf.Abs(targetDitance.z) < distanceAttackZ && Time.time > nextAttack)
-				{
-					anim.SetTrigger("Attack");
-					attack.SetEnemyAttack(enemyHit);
-					nextAttack = Time.time + attackRate;
-				}
-
-            rb.position = new Vector3(rb.position.x, rb.position.y, rb.position.z);
-
-        }
-
+		AiPatrol();
 					
 	}
+
+	void AiPatrol()
+	{
+        
+        if (cabeca)
+        {
+            switch (estadoAI)
+            {
+                case estadoDaAI.patrulha:
+                    if (useRota && navMesh.remainingDistance < 1)
+                    {
+                        navMesh.SetDestination(rota[UnityEngine.Random.Range(0, rota.Length - 1)].position);
+                    }
+                    if (cabeca.inimigosVisiveis.Count > 0)
+                    {
+                        alvo = cabeca.inimigosVisiveis[0];
+                        ultimaPosicConhecida = alvo.position;
+                        estadoAI = estadoDaAI.seguindo;
+                    }
+                    break;
+                case estadoDaAI.seguindo:
+                    navMesh.SetDestination(alvo.position);
+                    if (!cabeca.inimigosVisiveis.Contains(alvo))
+                    {
+                        ultimaPosicConhecida = alvo.position;
+                        estadoAI = estadoDaAI.procurandoAlvoPerdido;
+                    }
+                    break;
+                case estadoDaAI.procurandoAlvoPerdido:
+                    navMesh.SetDestination(ultimaPosicConhecida);
+                    timerProcura += Time.deltaTime;
+                    if (timerProcura > 5)
+                    {
+                        timerProcura = 0;
+                        estadoAI = estadoDaAI.patrulha;
+                        break;
+                    }
+                    if (cabeca.inimigosVisiveis.Count > 0)
+                    {
+                        alvo = cabeca.inimigosVisiveis[0];
+                        ultimaPosicConhecida = alvo.position;
+                        estadoAI = estadoDaAI.seguindo;
+                    }
+                    break;
+            }
+        }
+
+    }
 
     void CheckGrounded()
     {
