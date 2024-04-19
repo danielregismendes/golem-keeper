@@ -11,7 +11,6 @@ GameObject:
   - component: {fileID: 1682757094948046910}
   - component: {fileID: 2132196433641491249}
   - component: {fileID: 5747956361716257381}
-  - component: {fileID: 4725285761178176157}
   m_Layer: 0
   m_Name: Dorso
   m_TagString: Untagged
@@ -86,29 +85,6 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!136 &4725285761178176157
-CapsuleCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1423486247125787420}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Radius: 0.5000001
-  m_Height: 2
-  m_Direction: 1
-  m_Center: {x: 0.000000059604645, y: 0, z: -0.00000008940697}
 --- !u!1 &1680904015082499430
 GameObject:
   m_ObjectHideFlags: 0
@@ -202,9 +178,12 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7222288255210858435}
+  - component: {fileID: 7690426222230691355}
+  - component: {fileID: 1531705310901527973}
+  - component: {fileID: 5282167110688804916}
   m_Layer: 0
   m_Name: Enemy_Boi
-  m_TagString: Untagged
+  m_TagString: Enemy
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -219,7 +198,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 2, y: 2, z: 2}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 2457806965484019187}
@@ -227,6 +206,92 @@ Transform:
   - {fileID: 1955202002868256925}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!195 &7690426222230691355
+NavMeshAgent:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3018800835855595049}
+  m_Enabled: 1
+  m_AgentTypeID: -1372625422
+  m_Radius: 0.5
+  m_Speed: 30
+  m_Acceleration: 70
+  avoidancePriority: 50
+  m_AngularSpeed: 200
+  m_StoppingDistance: 0
+  m_AutoTraverseOffMeshLink: 1
+  m_AutoBraking: 1
+  m_AutoRepath: 1
+  m_Height: 2
+  m_BaseOffset: 0
+  m_WalkableMask: 4294967295
+  m_ObstacleAvoidanceType: 4
+--- !u!114 &1531705310901527973
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3018800835855595049}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 73e9aea9e72b873418fc1cb340da2204, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  rota:
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  useRota: 1
+  cabeca: {fileID: 5282167110688804916}
+  maxSpeed: 0
+  damageTime: 0.5
+  damage: 0
+  maxHealth: 0
+  attackRate: 1
+  collisionSound: {fileID: 0}
+  deathSound: {fileID: 0}
+  enemyHit:
+    damage: 1
+    collisionSound: {fileID: 0}
+  attack: {fileID: 0}
+  maxSlope: 0
+  layerGround:
+    serializedVersion: 2
+    m_Bits: 0
+  groundCheck: {fileID: 1340169047823258319}
+  currentHealth: 0
+--- !u!114 &5282167110688804916
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3018800835855595049}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7272be775f703fa45a34d590995dc9bb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  cabecaInimigo: {fileID: 5200126215825701167}
+  _tipoDeColisao: 0
+  _tipoDeChecagem: 2
+  distanciaDeVisao: 40
+  layersDosInimigos:
+    serializedVersion: 2
+    m_Bits: 2
+  desenharEsfera: 1
+  tagDosInimigos: Player
+  raiosExtraPorCamada: 50
+  anguloDeVisao: 360
+  numeroDeCamadas: 5
+  distanciaEntreCamadas: 0.05
+  inimigosVisiveis: []
 --- !u!1 &4155031154536633341
 GameObject:
   m_ObjectHideFlags: 0
@@ -275,7 +340,6 @@ GameObject:
   - component: {fileID: 5200126215825701167}
   - component: {fileID: 2430525104837628871}
   - component: {fileID: 1138062625070010618}
-  - component: {fileID: 8472118028874169643}
   m_Layer: 0
   m_Name: "Cabe\xE7a"
   m_TagString: Untagged
@@ -350,27 +414,6 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!135 &8472118028874169643
-SphereCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4625486999719853610}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Radius: 0.5
-  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &5175814850330999442
 GameObject:
   m_ObjectHideFlags: 0
@@ -382,7 +425,6 @@ GameObject:
   - component: {fileID: 1212932960986669968}
   - component: {fileID: 7298714902928160665}
   - component: {fileID: 589250665654663021}
-  - component: {fileID: 8505311623536935868}
   m_Layer: 0
   m_Name: Pata_Dianteira_2
   m_TagString: Untagged
@@ -457,29 +499,6 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!136 &8505311623536935868
-CapsuleCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5175814850330999442}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Radius: 0.5000001
-  m_Height: 2
-  m_Direction: 1
-  m_Center: {x: 0.000000059604645, y: 0, z: -0.00000008940697}
 --- !u!1 &6922986181588670708
 GameObject:
   m_ObjectHideFlags: 0
@@ -491,7 +510,6 @@ GameObject:
   - component: {fileID: 1505763676063214364}
   - component: {fileID: 1737647638218110685}
   - component: {fileID: 3815910583066770492}
-  - component: {fileID: 6691226892045183408}
   m_Layer: 0
   m_Name: Pata_Dianteira_1
   m_TagString: Untagged
@@ -566,29 +584,6 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!136 &6691226892045183408
-CapsuleCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6922986181588670708}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Radius: 0.5000001
-  m_Height: 2
-  m_Direction: 1
-  m_Center: {x: 0.000000059604645, y: 0, z: -0.00000008940697}
 --- !u!1 &7694307964468960942
 GameObject:
   m_ObjectHideFlags: 0
@@ -600,7 +595,6 @@ GameObject:
   - component: {fileID: 5643808033399450305}
   - component: {fileID: 4951630612386089752}
   - component: {fileID: 5088851542018495155}
-  - component: {fileID: 375695574051133271}
   m_Layer: 0
   m_Name: Pata_Traseira_1
   m_TagString: Untagged
@@ -675,29 +669,6 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!136 &375695574051133271
-CapsuleCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7694307964468960942}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Radius: 0.5000001
-  m_Height: 2
-  m_Direction: 1
-  m_Center: {x: 0.000000059604645, y: 0, z: -0.00000008940697}
 --- !u!1 &7817542616216688929
 GameObject:
   m_ObjectHideFlags: 0
@@ -709,7 +680,6 @@ GameObject:
   - component: {fileID: 1188299033381022043}
   - component: {fileID: 5515753385491883803}
   - component: {fileID: 548092410122109437}
-  - component: {fileID: 3661718548381892320}
   m_Layer: 0
   m_Name: Pata_Traseira_2
   m_TagString: Untagged
@@ -784,26 +754,3 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!136 &3661718548381892320
-CapsuleCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7817542616216688929}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Radius: 0.5000001
-  m_Height: 2
-  m_Direction: 1
-  m_Center: {x: 0.000000059604645, y: 0, z: -0.00000008940697}

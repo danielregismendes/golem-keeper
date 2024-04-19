@@ -18,6 +18,8 @@ public class Enemy : MonoBehaviour {
     public Transform[] rota;
 	public bool useRota = true;
     public FOVEnemys cabeca;
+    public int stopDistancePatrol;
+    public int stopDistancePlayer;
 
     public float maxSpeed;
 	public float damageTime = 0.5f;
@@ -96,8 +98,10 @@ public class Enemy : MonoBehaviour {
             switch (estadoAI)
             {
                 case estadoDaAI.patrulha:
-                    if (useRota && navMesh.remainingDistance < 1)
+                    
+                    if (useRota && navMesh.remainingDistance < stopDistancePatrol + 1)
                     {
+                        navMesh.stoppingDistance = stopDistancePatrol;
                         navMesh.SetDestination(rota[UnityEngine.Random.Range(0, rota.Length - 1)].position);
                     }
                     if (cabeca.inimigosVisiveis.Count > 0)
@@ -108,6 +112,7 @@ public class Enemy : MonoBehaviour {
                     }
                     break;
                 case estadoDaAI.seguindo:
+                    navMesh.stoppingDistance = stopDistancePlayer;
                     navMesh.SetDestination(alvo.position);
                     if (!cabeca.inimigosVisiveis.Contains(alvo))
                     {
