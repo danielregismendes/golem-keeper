@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 1682757094948046910}
   - component: {fileID: 2132196433641491249}
   - component: {fileID: 5747956361716257381}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Dorso
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -111,7 +111,7 @@ Transform:
   m_GameObject: {fileID: 1680904015082499430}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 1.5, z: -1.5}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -178,10 +178,14 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7222288255210858435}
+  - component: {fileID: 2483002123454017426}
+  - component: {fileID: 6598799947354440275}
   - component: {fileID: 7690426222230691355}
   - component: {fileID: 1531705310901527973}
   - component: {fileID: 5282167110688804916}
-  m_Layer: 0
+  - component: {fileID: 1762154257707503562}
+  - component: {fileID: 6959837686110602850}
+  m_Layer: 8
   m_Name: Enemy_Boi
   m_TagString: Enemy
   m_Icon: {fileID: 0}
@@ -206,6 +210,49 @@ Transform:
   - {fileID: 1955202002868256925}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!65 &2483002123454017426
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3018800835855595049}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 1, y: 1.6456327, z: 2.2186854}
+  m_Center: {x: 0, y: 1.0681522, z: -0.09276974}
+--- !u!95 &6598799947354440275
+Animator:
+  serializedVersion: 7
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3018800835855595049}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: 815c06c215f3bd144a8c9d469d00430c, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_AnimatePhysics: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
 --- !u!195 &7690426222230691355
 NavMeshAgent:
   m_ObjectHideFlags: 0
@@ -216,11 +263,11 @@ NavMeshAgent:
   m_Enabled: 1
   m_AgentTypeID: -1372625422
   m_Radius: 0.5
-  m_Speed: 30
-  m_Acceleration: 70
+  m_Speed: 15
+  m_Acceleration: 30
   avoidancePriority: 50
   m_AngularSpeed: 200
-  m_StoppingDistance: 0
+  m_StoppingDistance: 2
   m_AutoTraverseOffMeshLink: 1
   m_AutoBraking: 1
   m_AutoRepath: 1
@@ -249,17 +296,26 @@ MonoBehaviour:
   - {fileID: 0}
   useRota: 1
   cabeca: {fileID: 5282167110688804916}
+  stopDistancePatrol: 3
+  stopDistancePlayer: 25
+  velocidade: 0
+  aceleracao: 0
+  velInvestida: 200
+  aceInvestida: 200
+  timerAtaque: 2
+  knockback: 500
   maxSpeed: 0
   damageTime: 0.5
-  damage: 0
-  maxHealth: 0
+  damage: 1
+  maxHealth: 10
   attackRate: 1
   collisionSound: {fileID: 0}
   deathSound: {fileID: 0}
   enemyHit:
     damage: 1
     collisionSound: {fileID: 0}
-  attack: {fileID: 0}
+    knockback: 25
+  attack: {fileID: 1762154257707503562}
   maxSlope: 0
   layerGround:
     serializedVersion: 2
@@ -279,19 +335,58 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   cabecaInimigo: {fileID: 5200126215825701167}
-  _tipoDeColisao: 0
+  _tipoDeColisao: 1
   _tipoDeChecagem: 2
   distanciaDeVisao: 40
   layersDosInimigos:
     serializedVersion: 2
-    m_Bits: 2
+    m_Bits: 64
   desenharEsfera: 1
   tagDosInimigos: Player
-  raiosExtraPorCamada: 50
+  raiosExtraPorCamada: 100
   anguloDeVisao: 360
   numeroDeCamadas: 5
   distanciaEntreCamadas: 0.05
   inimigosVisiveis: []
+--- !u!114 &1762154257707503562
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3018800835855595049}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d914e7687c8b0f74d832cb5043eccabf, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!54 &6959837686110602850
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3018800835855595049}
+  serializedVersion: 4
+  m_Mass: 1
+  m_Drag: 0
+  m_AngularDrag: 0.05
+  m_CenterOfMass: {x: 0, y: 0, z: 0}
+  m_InertiaTensor: {x: 1, y: 1, z: 1}
+  m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ImplicitCom: 1
+  m_ImplicitTensor: 1
+  m_UseGravity: 1
+  m_IsKinematic: 1
+  m_Interpolate: 0
+  m_Constraints: 112
+  m_CollisionDetection: 0
 --- !u!1 &4155031154536633341
 GameObject:
   m_ObjectHideFlags: 0
@@ -301,7 +396,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2457806965484019187}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Corpo
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -340,7 +435,7 @@ GameObject:
   - component: {fileID: 5200126215825701167}
   - component: {fileID: 2430525104837628871}
   - component: {fileID: 1138062625070010618}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: "Cabe\xE7a"
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -425,7 +520,7 @@ GameObject:
   - component: {fileID: 1212932960986669968}
   - component: {fileID: 7298714902928160665}
   - component: {fileID: 589250665654663021}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Pata_Dianteira_2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -510,7 +605,7 @@ GameObject:
   - component: {fileID: 1505763676063214364}
   - component: {fileID: 1737647638218110685}
   - component: {fileID: 3815910583066770492}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Pata_Dianteira_1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -595,7 +690,7 @@ GameObject:
   - component: {fileID: 5643808033399450305}
   - component: {fileID: 4951630612386089752}
   - component: {fileID: 5088851542018495155}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Pata_Traseira_1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -680,7 +775,7 @@ GameObject:
   - component: {fileID: 1188299033381022043}
   - component: {fileID: 5515753385491883803}
   - component: {fileID: 548092410122109437}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Pata_Traseira_2
   m_TagString: Untagged
   m_Icon: {fileID: 0}

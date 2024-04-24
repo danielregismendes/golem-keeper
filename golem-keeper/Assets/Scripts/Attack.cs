@@ -8,13 +8,12 @@ using static Enemy;
 public class Attack : MonoBehaviour
 {
 
-    public bool isPlayer;
-
     private AudioClip hitSound;
     private AudioClip hitSoundEnemy;
     private int damage;
     private int enemyDamage;
     private bool weapon;
+    private float knockback;
 
 
     public void SetAttack(Hit hit)
@@ -28,6 +27,7 @@ public class Attack : MonoBehaviour
     {
         enemyDamage = enemy.damage;
         hitSoundEnemy = enemy.collisionSound;
+        if(enemy.knockback > 0) { knockback = enemy.knockback; }
     }
 
     [System.Obsolete]
@@ -38,7 +38,7 @@ public class Attack : MonoBehaviour
         //CrashItem crashItem = other.GetComponent<CrashItem>();
 
 
-        if (isPlayer && enemy != null)
+        if (enemy != null)
         {
             if (enemy.GetHealth() > 0)
             {                                
@@ -46,12 +46,13 @@ public class Attack : MonoBehaviour
             }
         }
 
-        if (!isPlayer && player != null)
+        if (player != null)
         {
             if(player.GetHealth() > 0)
             {
                 Debug.Log("Dano do inimigo = " + enemyDamage);
                 player.TookDamage(enemyDamage);
+                player.Knockback(knockback);
             }
         }
 

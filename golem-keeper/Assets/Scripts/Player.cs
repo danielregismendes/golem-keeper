@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Events;
+using static UnityEngine.GraphicsBuffer;
 
 public class Player : MonoBehaviour
 {
@@ -92,6 +93,14 @@ public class Player : MonoBehaviour
 
     }
 
+    public void Knockback(float forca)
+    {
+        Debug.Log("knocback: " + forca);
+        
+        rb.AddForce(-transform.forward * forca, ForceMode.Impulse);
+
+    }
+
     void CheckFarmGround()
     {
         RaycastHit hit;
@@ -177,6 +186,7 @@ public class Player : MonoBehaviour
 
             }
         }
+
         else
         {
 
@@ -185,7 +195,6 @@ public class Player : MonoBehaviour
 
                 Vector3 limitedVelocity = rb.velocity.normalized * maxSpeed;
                 rb.velocity = new Vector3(limitedVelocity.x, rb.velocity.y, limitedVelocity.z);
-
 
             }
         }
@@ -400,6 +409,7 @@ public class Player : MonoBehaviour
     public int GetHealth()
     {
         return currentHealth;
+          
     }
 
     void ZeroSpeed()

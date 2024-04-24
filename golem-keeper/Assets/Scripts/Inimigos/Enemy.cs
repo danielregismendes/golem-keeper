@@ -10,7 +10,7 @@ public class Enemy : MonoBehaviour {
 
     enum estadoDaAI
     {
-        patrulha, seguindo, procurandoAlvoPerdido
+        patrulha, seguindo, ataque, procurandoAlvoPerdido
     };
 
     estadoDaAI estadoAI;
@@ -21,9 +21,13 @@ public class Enemy : MonoBehaviour {
     public int stopDistancePatrol;
     public int stopDistancePlayer;
 
+    public float velocidade;
+    public float aceleracao;
+    public float velInvestida;
+    public float aceInvestida;
+    public float timerAtaque;
     public float maxSpeed;
 	public float damageTime = 0.5f;
-	public int damage;
 	public int maxHealth;
 	public float attackRate = 1f;
 	public AudioClip collisionSound, deathSound;
@@ -40,7 +44,7 @@ public class Enemy : MonoBehaviour {
     private Vector3 ultimaPosicConhecida;
     private float timerProcura;
 
-
+    private float distancePlayer;
     private float currentSpeed;
 	private Rigidbody rb;
 	protected Animator anim;
@@ -72,23 +76,36 @@ public class Enemy : MonoBehaviour {
         estadoAI = estadoDaAI.patrulha;
         posicInicialDaAI = transform.position;
         timerProcura = 0;
+        velocidade = navMesh.speed;
+        aceleracao = navMesh.acceleration;
+
 
     }
 	
 
 	void Update () 
 	{
+        anim.SetFloat("Velocidade", navMesh.velocity.magnitude);
 
-		//CheckGrounded();
-				
-	}
+        distancePlayer = Vector3.Distance(transform.position, target.position);
+               
+        //CheckGrounded();
+        /*
+        Debug.Log("Estado: " + estadoAI);
+        Debug.Log("Distancia Restante: " + navMesh.remainingDistance);
+        Debug.Log("Distancia Alvo: " + navMesh.stoppingDistance);
+        */
+
+        AiPatrol();
+
+    }
 
 	private void FixedUpdate()
 	{
 
-		AiPatrol();
-					
-	}
+        
+
+    }
 
 	void AiPatrol()
 	{
@@ -98,7 +115,7 @@ public class Enemy : MonoBehaviour {
             switch (estadoAI)
             {
                 case estadoDaAI.patrulha:
-                    
+                    navMesh.stoppingDistance = stopDistancePatrol;
                     if (useRota && navMesh.remainingDistance < stopDistancePatrol + 1)
                     {
                         navMesh.stoppingDistance = stopDistancePatrol;
@@ -111,19 +128,34 @@ public class Enemy : MonoBehaviour {
                         estadoAI = estadoDaAI.seguindo;
                     }
                     break;
+
                 case estadoDaAI.seguindo:
                     navMesh.stoppingDistance = stopDistancePlayer;
                     navMesh.SetDestination(alvo.position);
+                    LookTargert(alvo.transform);
+                    if (navMesh.remainingDistance < stopDistancePlayer + 1)
+                    {
+                        ultimaPosicConhecida = alvo.position;
+                        LookTargert(alvo.transform);
+                        estadoAI = estadoDaAI.ataque;
+                    }
                     if (!cabeca.inimigosVisiveis.Contains(alvo))
                     {
                         ultimaPosicConhecida = alvo.position;
+                        LookTargert(alvo.transform);
                         estadoAI = estadoDaAI.procurandoAlvoPerdido;
                     }
                     break;
+
+                case estadoDaAI.ataque:
+                    AtaqueBoi();
+                    break;
+
                 case estadoDaAI.procurandoAlvoPerdido:
+                    navMesh.stoppingDistance = stopDistancePlayer;
                     navMesh.SetDestination(ultimaPosicConhecida);
                     timerProcura += Time.deltaTime;
-                    if (timerProcura > 5)
+                    if (timerAtaque < timerProcura)
                     {
                         timerProcura = 0;
                         estadoAI = estadoDaAI.patrulha;
@@ -133,12 +165,53 @@ public class Enemy : MonoBehaviour {
                     {
                         alvo = cabeca.inimigosVisiveis[0];
                         ultimaPosicConhecida = alvo.position;
+                        LookTargert(alvo.transform);
                         estadoAI = estadoDaAI.seguindo;
                     }
                     break;
             }
         }
 
+    }
+
+    void AtaqueBoi()
+    {
+        navMesh.stoppingDistance = stopDistancePatrol;
+        navMesh.speed = velInvestida;
+        navMesh.acceleration = aceInvestida;
+
+        LookTargert(alvo.transform);
+
+        if (navMesh.remainingDistance > stopDistancePatrol) navMesh.SetDestination(ultimaPosicConhecida);
+
+        if (navMesh.remainingDistance <= stopDistancePatrol + 1)
+        {
+            if(timerProcura == 0)
+            {
+                anim.SetTrigger("Ataque");
+                attack.SetEnemyAttack(enemyHit);
+            }
+
+            timerProcura += Time.deltaTime;
+            if (timerAtaque < timerProcura)
+            {                
+                timerProcura = 0;
+                navMesh.speed = velocidade;
+                navMesh.acceleration = aceleracao;
+                estadoAI = estadoDaAI.patrulha;
+                               
+            }
+        }            
+
+    }
+
+
+
+    void LookTargert(Transform target)
+    {
+        Vector3 direction = (target.position - transform.position).normalized;
+        Quaternion lookRotation = Quaternion.LookRotation(new Vector3(direction.x, 0, direction.z));
+        transform.rotation = Quaternion.Slerp(transform.rotation, lookRotation, Time.deltaTime * navMesh.angularSpeed);
     }
 
     void CheckGrounded()
@@ -174,7 +247,7 @@ public class Enemy : MonoBehaviour {
 		{
 			damaged = true;
 			currentHealth -= damage;
-			anim.SetTrigger("HitDamage");
+			//anim.SetTrigger("HitDamage");
 			if(currentHealth <= 0)
 			{
 				isDead = true;
@@ -193,7 +266,7 @@ public class Enemy : MonoBehaviour {
 	void ResetSpeed()
 	{
 		currentSpeed = maxSpeed;
-	}
+    }
     void ZeroSpeed()
     {
         currentSpeed = 0;
@@ -204,6 +277,7 @@ public class Enemy : MonoBehaviour {
 	{
 		public int damage = 1;
 		public AudioClip collisionSound;
+        public float knockback;
     }
 
     void PlayEnemyHit(EnemyHit enemyHit)
